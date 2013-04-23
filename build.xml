@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<project name="IndiCrowdStudioManager" default="jar" basedir="..">
+	
+	<property name="wowza.lib.dir" value="/Library/WowzaMediaServer/lib"/>
+	<property name="jar.filename" value="IndiCrowdStudioManager.jar"/>
+	<property name="core.build.dir" value="bin"/>
+
+	<target name="jar">
+		<jar jarfile="${wowza.lib.dir}/${jar.filename}">
+			<fileset dir="${core.build.dir}"/>
+			<fileset dir="lib">
+                 <include name="*.jar" />
+			</fileset>
+		</jar>
+	</target>
+	
+</project>
