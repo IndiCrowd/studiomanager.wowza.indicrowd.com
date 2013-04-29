@@ -2,14 +2,19 @@ package com.indicrowd.wowza.studiomanager;
 
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.wowza.wms.application.IApplicationInstance;
+import com.wowza.wms.logging.WMSLogger;
+import com.wowza.wms.module.ModuleBase;
 import com.wowza.wms.stream.IMediaStream;
 import com.wowza.wms.stream.MediaStreamMap;
 
 import redis.clients.jedis.JedisPubSub;
  
 public class Subscriber extends JedisPubSub {
-	IApplicationInstance appInstance;
+	private IApplicationInstance appInstance;
+	private static Logger logger = WMSLogger.getRootLogger();
 
 	public Subscriber(IApplicationInstance appInstance) {
 		this.appInstance = appInstance;
@@ -17,7 +22,7 @@ public class Subscriber extends JedisPubSub {
  
     @Override
     public void onMessage(String channel, String message) {
-    	System.out.println("onMessage -> " + channel + " " + message);
+    	logger.info("onMessage -> " + channel + " " + message);
     	
     	if (appInstance != null) {
     		
@@ -50,30 +55,30 @@ public class Subscriber extends JedisPubSub {
  
     @Override
     public void onPMessage(String pattern, String channel, String message) {
-    	System.out.println("onPMessage -> " + pattern + " " + channel + " " + message);
+    	logger.info("onPMessage -> " + pattern + " " + channel + " " + message);
  
     }
  
     @Override
     public void onSubscribe(String channel, int subscribedChannels) {
-    	System.out.println("onSubscribe -> " + channel + " " + subscribedChannels);
+    	logger.info("onSubscribe -> " + channel + " " + subscribedChannels);
  
     }
  
     @Override
     public void onUnsubscribe(String channel, int subscribedChannels) {
-    	System.out.println("onUnsubscribe -> " + channel + " " + subscribedChannels);
+    	logger.info("onUnsubscribe -> " + channel + " " + subscribedChannels);
  
     }
  
     @Override
     public void onPUnsubscribe(String pattern, int subscribedChannels) {
-    	System.out.println("onPUnsubscribe -> " + pattern + " " + subscribedChannels);
+    	logger.info("onPUnsubscribe -> " + pattern + " " + subscribedChannels);
  
     }
  
     @Override
     public void onPSubscribe(String pattern, int subscribedChannels) {
-    	System.out.println("onPSubscribe -> " + pattern + " " + subscribedChannels);
+    	logger.info("onPSubscribe -> " + pattern + " " + subscribedChannels);
     }
 }
