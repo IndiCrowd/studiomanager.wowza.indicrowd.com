@@ -2,14 +2,18 @@ package com.indicrowd.wowza.studiomanager;
 
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.wowza.wms.application.IApplicationInstance;
+import com.wowza.wms.logging.WMSLogger;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 public class JedisHelper {
-
+	private static Logger logger = WMSLogger.getRootLogger();
+	
 	private static JedisHelper instance;
 	private final static int COMMON_EXPIRE_SECOND = 7 * 24 * 60 * 60; 
 	public static final String channelName = "commonChannel";
@@ -21,7 +25,6 @@ public class JedisHelper {
 	private String auth;
 	private Jedis subscriberJedis = null;
 	private Subscriber subscriber = null;
-	
 	
 	public JedisHelper(String hostname, String auth) {
 		JedisPoolConfig config = new JedisPoolConfig();
@@ -42,11 +45,11 @@ public class JedisHelper {
             @Override
             public void run() {
                 try {
-                    System.out.println("Subscribing to \"commonChannel\". This thread will be blocked.");
+                    logger.info("Subscribing to \"commonChannel\". This thread will be blocked.");
                     subscriberJedis.subscribe(subscriber, channelName);
                     System.out.println("Subscription ended.");
                 } catch (Exception e) {
-                	 System.out.println("Subscribing failed." + e);
+                	logger.info("Subscribing failed." + e);
                 }
             }
         }).start();
