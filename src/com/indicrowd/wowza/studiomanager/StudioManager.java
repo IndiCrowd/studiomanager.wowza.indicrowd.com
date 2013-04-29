@@ -89,15 +89,17 @@ public class StudioManager extends ModuleBase {
 		}
 
 		if (streamName == null) {
-			streamName = "none";
+			streamName = "null";
 		}
 		
 		if (valid) {
 			invokePrevious(client, function, params);
 		}
 		else {		
-			getLogger().info("ModuleBlocked.publish["+appInstance.getContextStr()+"]: Stream name is not valid: "+streamName);
-			sendClientOnStatusError(client, "NetStream.Publish.Denied", "Stream name is not valid: "+streamName);
+			if (streamName != "null") {
+				getLogger().info("ModuleBlocked.publish["+appInstance.getContextStr()+"]: Stream name is not valid: "+streamName);
+				sendClientOnStatusError(client, "NetStream.Publish.Denied", "Stream name is not valid: "+streamName);
+			}
 
 		}
 	}
