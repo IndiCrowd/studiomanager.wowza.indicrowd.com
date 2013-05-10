@@ -2,7 +2,9 @@ package com.indicrowd.wowza.studiomanager;
 
 import java.io.*;
 
+import com.indicrowd.wowza.studiomanager.stream.StreamInfo;
 import com.wowza.wms.application.IApplication;
+import com.wowza.wms.application.IApplicationInstance;
 import com.wowza.wms.http.*;
 import com.wowza.wms.logging.*;
 import com.wowza.wms.stream.IMediaStream;
@@ -21,23 +23,25 @@ public class HTTPProvider extends HTTProvider2Base {
 			OutputStream out = resp.getOutputStream();
 			
 			String concertId = req.getParameter("concertId");
-			String eventType = req.getParameter("eventType");
 			
-			retStr += concertId + " ";
-			retStr += eventType;
+			retStr += concertId;
 			
 			IApplication appl = vhost.getApplication("live");
-			for (String data : appl.getAppInstanceNames()) {
-				
-				MediaStreamMap map = appl.getAppInstance(data).getStreams();
-				
-				map.clearStreamName("testing");
+			
+			IApplicationInstance appinst = appl.getAppInstance("_definst_");
+			
+			IMediaStream ms = appinst.getStreams().getStream(concertId);
+			
+			StreamInfo streamInfo = new StreamInfo(concertId);
+			
+			if (ms == null) {
+				streamInfo.setState(StreamInfo.StreamInfoState.FAILED);
+			} else {
+				streamInfo.setState(StreamInfo.StreamInfoState.PLAY);
+				streamInfo.setNowCount(appinst.getPlayStreamCount(concertId));
 			}
 			
-			byte[] outBytes = retStr.getBytes();
-			out.write(outBytes);
-			
-			
+			out.write(streamInfo.serializeJSON().getBytes());
 			
 		} catch (Exception e) { 
 			WMSLoggerFactory.getLogger(null).error(
